@@ -22,18 +22,14 @@ describe('testing /api/topics', () => {
     test('should respond with the correct response body', () => {
         return request(app).get("/api/topics")
         .then(response => {
-            // console.log(response._body);
             response._body.forEach((topic => {
                 expect(typeof topic.description).toBe("string")
                 expect(typeof topic.slug).toBe("string");
             }))
         })
     });
+    test('status:404, should respond with 404 when passed a route that does not exist ', () => {
+        return request(app).get("/api/randomstuff4")
+        .expect(404)
+    });
 });
-
-/*
-what errors can occur with this endpoint 
-then test 4 them, execpt 500 errors
-
-come back to this, do the model with the get then test 4 errors and error handle
-*/

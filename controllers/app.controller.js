@@ -6,8 +6,7 @@ function topicsController(request, response, next) {
         return response.status(200).send(data);
     })
     .catch(err => {
-        // next(err);
-        console.log(err);
+        next(err);
     })
 }
 
