@@ -22,10 +22,10 @@ describe('testing /api/topics', () => {
         return request(app).get("/api/topics")
         .expect(200)
     });
-    test('should respond with the correct response body', () => {
+    test('should respond with an array of topic objects, with the correct properties', () => {
         return request(app).get("/api/topics")
         .then(response => {
-            response._body.forEach((topic => {
+            response._body.topics.forEach((topic => {
                 expect(typeof topic.description).toBe("string")
                 expect(typeof topic.slug).toBe("string");
             }))

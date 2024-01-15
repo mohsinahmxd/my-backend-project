@@ -4,7 +4,7 @@ const allEndpoints = require("../endpoints.json")
 
 function topicsController(request, response, next) {
     return getAllTopics().then((data) => {
-        return response.status(200).send(data);
+        return response.status(200).send({topics : data});
     })
     .catch(err => {
         next(err);
