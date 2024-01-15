@@ -1,4 +1,5 @@
 const {getAllTopics} = require("../models/app.model")
+const allEndpoints = require("../endpoints.json")
 
 
 function topicsController(request, response, next) {
@@ -11,7 +12,7 @@ function topicsController(request, response, next) {
 }
 
 function apiController(request, response, next) {
-    return response.status(200).send();
+    response.status(200).send(allEndpoints);
 }
 
 module.exports = {topicsController, apiController}
