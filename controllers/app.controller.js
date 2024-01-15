@@ -1,8 +1,14 @@
+const {getAllTopics} = require("../models/app.model")
 
 
 function topicsController(request, response, next) {
-
-    return response.status(200).send();
+    return getAllTopics().then((data) => {
+        return response.status(200).send(data);
+    })
+    .catch(err => {
+        // next(err);
+        console.log(err);
+    })
 }
 
 module.exports = {topicsController}
