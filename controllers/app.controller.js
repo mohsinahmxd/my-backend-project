@@ -10,5 +10,9 @@ function topicsController(request, response, next) {
     })
 }
 
-module.exports = {topicsController}
+function apiController(request, response, next) {
+    return response.status(200).send();
+}
+
+module.exports = {topicsController, apiController}
 

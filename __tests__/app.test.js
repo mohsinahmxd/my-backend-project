@@ -33,3 +33,10 @@ describe('testing /api/topics', () => {
         .expect(404)
     });
 });
+
+describe('testing GET /api', () => {
+    test('should respond with a 200 status code', () => {
+        return request(app).get("/api")
+        .expect(200)
+    });
+});
