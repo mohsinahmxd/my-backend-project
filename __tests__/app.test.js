@@ -5,9 +5,7 @@ const seed = require("../db/seeds/seed.js")
 const testData = require("../db/data/test-data/index.js")
 const allEndpoints = require("../endpoints.json")
 
-// console.log(allEndpoints)
 
-// console.log(testData)
 
 beforeEach(() => {
     return seed(testData);
@@ -25,6 +23,7 @@ describe('testing /api/topics', () => {
     test('should respond with an array of topic objects, with the correct properties', () => {
         return request(app).get("/api/topics")
         .then(response => {
+            expect(response._body.topics.length > 0).toEqual(true); // check for empty arr
             response._body.topics.forEach((topic => {
                 expect(typeof topic.description).toBe("string")
                 expect(typeof topic.slug).toBe("string");
