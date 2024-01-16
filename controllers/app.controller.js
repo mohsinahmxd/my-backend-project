@@ -18,7 +18,6 @@ function articleController(request, response, next) {
     return getArticleById(chosenArticleId).then(data => {
         response.status(200).send({article : data})
     }).catch(err => {
-        // console.log(err)
         next(err);
     }) 
 }
