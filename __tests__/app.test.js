@@ -49,6 +49,7 @@ describe('testing GET /api', () => {
     });
 });
 
+
 describe('testing GET /api/articles/:article_id', () => {
     test('should respond with a 200 status code', () => {
         return request(app).get("/api/articles/1")
@@ -84,6 +85,72 @@ describe('testing GET /api/articles/:article_id', () => {
         .expect(400)
         .then(data => {
             expect(data._body.msg).toBe("Invalid input: 400 Bad Request");
+        })
+    });
+});
+
+describe('testing GET /api/articles', () => {
+    test('should respond with status 200 and an articles array of all article objects each with the required properties', () => {
+
+        // make sure body property is not included in final list of objects
+
+        return request(app).get("/api/articles")
+        .expect(200)
+        .then(response => {
+            expect(response._body.articles.length > 0).toEqual(true); // check for empty arr
+            response._body.articles.forEach((article => {
+                expect(typeof article.author).toBe("string")
+                expect(typeof article.title).toBe("string")
+                expect(typeof article.article_id).toBe("number")
+                expect(typeof article.topic).toBe("string")
+                expect(typeof article.created_at).toBe("string")
+                expect(typeof article.votes).toBe("number")
+                expect(typeof article.article_img_url).toBe("string")
+                // will test for comment_count in next test
+            }))
+        })
+    });
+    test('should be sorted by date in descending order', () => {
+        // do a loop, check in each one the date is not before each other
+        return request(app).get("/api/articles")
+        .then(data => {
+            let resultArr = data._body.articles; // putting in variable for convenience
+            expect(resultArr.length > 0).toEqual(true); // check for empty arr
+            for (let i = 0; i < resultArr.length - 2; i++) { // loop until 2nd last
+                // convert strings to date then to numbers to compare
+                expect(new Date(resultArr[i].created_at).getTime()).toBeGreaterThanOrEqual(new Date(resultArr[i + 1].created_at).getTime())
+            }
+        })
+    });
+    test.only('count up and return the correct amount of comments for each article_id. Do this for all article objects, then add the total comment_count to each object, and then return an array of all the modified article objects', () => {
+
+        // just do assertions for first 2 rows, we can then assume rest is correct
+        // it's already sorted in descending order so we know and expect which ones are first
+        return request(app).get("/api/articles")
+        .then(data => {
+            const expect1 = {
+                author: 'icellusedkars',
+                title: 'Eight pug gifs that remind me of mitch',
+                article_id: 3,
+                topic: 'mitch',
+                created_at: "2020-11-03T09:12:00.000Z",
+                votes: 0,
+                article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+                comment_count: '2'
+            }
+            const expect2 = {
+                author: 'icellusedkars',
+                title: 'A',
+                article_id: 6,
+                topic: 'mitch',
+                created_at: "2020-10-18T01:00:00.000Z",
+                votes: 0,
+                article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+                comment_count: '1'
+            }
+
+            expect(data._body.articles[0]).toEqual(expect1);
+            expect(data._body.articles[1]).toEqual(expect2);
         })
     });
 });
