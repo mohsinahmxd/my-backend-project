@@ -38,7 +38,7 @@ function getAllArticlesModel () {
     articles.created_at,
     articles.votes,
     article_img_url
-    ORDER BY articles.article_id`)
+    ORDER BY created_at DESC`)
     .then(data => {
         // console.log(data.rows)
         return data.rows;

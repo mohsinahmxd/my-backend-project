@@ -110,30 +110,43 @@ describe('testing GET /api/articles', () => {
             }))
         })
     });
+    test('should be sorted by date in descending order', () => {
+        // do a loop, check in each one the date is not before each other
+        return request(app).get("/api/articles")
+        .then(data => {
+            let resultArr = data._body.articles; // putting in variable for convenience
+            expect(resultArr.length > 0).toEqual(true); // check for empty arr
+            for (let i = 0; i < resultArr.length - 2; i++) { // loop until 2nd last
+                // convert strings to date then to numbers to compare
+                expect(new Date(resultArr[i].created_at).getTime()).toBeGreaterThanOrEqual(new Date(resultArr[i + 1].created_at).getTime())
+            }
+        })
+    });
     test('count up and return the correct amount of comments for each article_id. Do this for all article objects, then add the total comment_count to each object, and then return an array of all the modified article objects', () => {
 
         // just do assertions for first 2 rows, we can then assume rest is correct
+        // it's already sorted in descending order so we know and expect which ones are first
         return request(app).get("/api/articles")
         .then(data => {
             const expect1 = {
-                author: 'butter_bridge',
-                title: 'Living in the shadow of a great man',
-                article_id: 1,
+                author: 'icellusedkars',
+                title: 'Eight pug gifs that remind me of mitch',
+                article_id: 3,
                 topic: 'mitch',
-                created_at: "2020-07-09T20:11:00.000Z",
-                votes: 100,
+                created_at: "2020-11-03T09:12:00.000Z",
+                votes: 0,
                 article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
-                comment_count: '11'
+                comment_count: '2'
             }
             const expect2 = {
                 author: 'icellusedkars',
-                title: 'Sony Vaio; or, The Laptop',
-                article_id: 2,
+                title: 'A',
+                article_id: 6,
                 topic: 'mitch',
-                created_at: "2020-10-16T05:03:00.000Z",
+                created_at: "2020-10-18T01:00:00.000Z",
                 votes: 0,
                 article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
-                comment_count: '0'
+                comment_count: '1'
             }
 
             expect(data._body.articles[0]).toEqual(expect1);
@@ -142,8 +155,5 @@ describe('testing GET /api/articles', () => {
 
 
         
-    });
-    test.skip('should be sorted by date in descending order', () => {
-        // do a loop, check in each one the date is not before each other
     });
 });
