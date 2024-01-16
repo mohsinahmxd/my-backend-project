@@ -32,9 +32,8 @@ function getAllArticles(request, response, next) {
 
 function getAllCommentsForArticle(request, response, next) {
     const chosenArticleId = request.params.article_id
-
+    
     return getAllCommentsForArticleModel(chosenArticleId).then(data => {
-        console.log(data);
         response.status(200).send({comments : data})
     }).catch(err => {
         next(err);
