@@ -40,7 +40,6 @@ function getAllArticlesModel () {
     article_img_url
     ORDER BY created_at DESC`)
     .then(data => {
-        // console.log(data.rows)
         return data.rows;
     })
 }

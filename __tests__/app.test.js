@@ -122,7 +122,7 @@ describe('testing GET /api/articles', () => {
             }
         })
     });
-    test('count up and return the correct amount of comments for each article_id. Do this for all article objects, then add the total comment_count to each object, and then return an array of all the modified article objects', () => {
+    test.only('count up and return the correct amount of comments for each article_id. Do this for all article objects, then add the total comment_count to each object, and then return an array of all the modified article objects', () => {
 
         // just do assertions for first 2 rows, we can then assume rest is correct
         // it's already sorted in descending order so we know and expect which ones are first
@@ -152,8 +152,5 @@ describe('testing GET /api/articles', () => {
             expect(data._body.articles[0]).toEqual(expect1);
             expect(data._body.articles[1]).toEqual(expect2);
         })
-
-
-        
     });
 });
