@@ -49,6 +49,7 @@ describe('testing GET /api', () => {
     });
 });
 
+
 describe('testing GET /api/articles/:article_id', () => {
     test('should respond with a 200 status code', () => {
         return request(app).get("/api/articles/1")
@@ -85,5 +86,38 @@ describe('testing GET /api/articles/:article_id', () => {
         .then(data => {
             expect(data._body.msg).toBe("Invalid input: 400 Bad Request");
         })
+    });
+});
+
+describe('testing GET /api/articles', () => {
+    test('should respond with status 200 and an articles array of all article objects each with the required properties', () => {
+
+        // make sure body property is not included in final list of objects
+
+        return request(app).get("/api/articles")
+        .expect(200)
+        .then(response => {
+            expect(response._body.articles.length > 0).toEqual(true); // check for empty arr
+            response._body.articles.forEach((article => {
+                expect(typeof article.author).toBe("string")
+                expect(typeof article.title).toBe("string")
+                expect(typeof article.article_id).toBe("number")
+                expect(typeof article.topic).toBe("string")
+                expect(typeof article.created_at).toBe("string")
+                expect(typeof article.votes).toBe("number")
+                expect(typeof article.article_img_url).toBe("string")
+                // will test for comment_count in next test
+            }))
+        })
+    });
+    test.skip('count up and return the correct amount of comments for each article_id. Do this for all article objects, then add the total comment_count to each object, and then return an array of all the modified article objects', () => {
+
+        // just do assertions for first 3 rows, we can then assume rest is correct
+        
+
+        
+    });
+    test.skip('should be sorted by date in descending order', () => {
+        // do a loop, check in each one the date is not before each other
     });
 });

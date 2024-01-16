@@ -18,4 +18,11 @@ function getArticleById (chosenId) {
     })
 }
 
-module.exports = {getAllTopics, getArticleById}
+function getAllArticlesModel () {
+    return db.query(`SELECT author, title, article_id, topic, created_at, votes, article_img_url FROM articles`).then(data => {
+        // console.log(data.rows)
+        return data.rows;
+    })
+}
+
+module.exports = {getAllTopics, getArticleById, getAllArticlesModel}
