@@ -110,10 +110,36 @@ describe('testing GET /api/articles', () => {
             }))
         })
     });
-    test.skip('count up and return the correct amount of comments for each article_id. Do this for all article objects, then add the total comment_count to each object, and then return an array of all the modified article objects', () => {
+    test('count up and return the correct amount of comments for each article_id. Do this for all article objects, then add the total comment_count to each object, and then return an array of all the modified article objects', () => {
 
-        // just do assertions for first 3 rows, we can then assume rest is correct
-        
+        // just do assertions for first 2 rows, we can then assume rest is correct
+        return request(app).get("/api/articles")
+        .then(data => {
+            const expect1 = {
+                author: 'butter_bridge',
+                title: 'Living in the shadow of a great man',
+                article_id: 1,
+                topic: 'mitch',
+                created_at: "2020-07-09T20:11:00.000Z",
+                votes: 100,
+                article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+                comment_count: '11'
+            }
+            const expect2 = {
+                author: 'icellusedkars',
+                title: 'Sony Vaio; or, The Laptop',
+                article_id: 2,
+                topic: 'mitch',
+                created_at: "2020-10-16T05:03:00.000Z",
+                votes: 0,
+                article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+                comment_count: '0'
+            }
+
+            expect(data._body.articles[0]).toEqual(expect1);
+            expect(data._body.articles[1]).toEqual(expect2);
+        })
+
 
         
     });

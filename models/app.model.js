@@ -19,7 +19,27 @@ function getArticleById (chosenId) {
 }
 
 function getAllArticlesModel () {
-    return db.query(`SELECT author, title, article_id, topic, created_at, votes, article_img_url FROM articles`).then(data => {
+    return db.query(`SELECT
+    articles.author,
+    title,
+    articles.article_id,
+    topic,
+    articles.created_at,
+    articles.votes,
+    article_img_url,
+    COUNT (comments.comment_id) AS comment_count
+    FROM articles
+    LEFT JOIN comments ON articles.article_id = comments.article_id
+    GROUP BY
+    articles.author,
+    title,
+    articles.article_id,
+    topic,
+    articles.created_at,
+    articles.votes,
+    article_img_url
+    ORDER BY articles.article_id`)
+    .then(data => {
         // console.log(data.rows)
         return data.rows;
     })

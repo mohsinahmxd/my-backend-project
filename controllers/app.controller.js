@@ -24,10 +24,10 @@ function articleController(request, response, next) {
 
 function getAllArticles(request, response, next) {
     return getAllArticlesModel().then(data => {
-        // console.log(data);
+        console.log(data);
         response.status(200).send({articles : data});
     }).catch(err => {
-        // console.log(err);
+        console.log(err);
     })
 }
 
