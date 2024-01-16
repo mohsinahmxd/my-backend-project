@@ -122,7 +122,7 @@ describe('testing GET /api/articles', () => {
             }
         })
     });
-    test.only('count up and return the correct amount of comments for each article_id. Do this for all article objects, then add the total comment_count to each object, and then return an array of all the modified article objects', () => {
+    test('count up and return the correct amount of comments for each article_id. Do this for all article objects, then add the total comment_count to each object, and then return an array of all the modified article objects', () => {
 
         // just do assertions for first 2 rows, we can then assume rest is correct
         // it's already sorted in descending order so we know and expect which ones are first
@@ -151,6 +151,66 @@ describe('testing GET /api/articles', () => {
 
             expect(data._body.articles[0]).toEqual(expect1);
             expect(data._body.articles[1]).toEqual(expect2);
+        })
+    });
+});
+
+// --
+// -- 
+
+describe('testing GET /api/articles/:article_id/comments', () => {
+    test('should return status code 200 and an array of comments for the given article_id', () => {
+
+        // build expected
+        // i have put these in DESC order by date for a future test
+        const expected = {comments : [
+            {
+                comment_id: 11,
+                body: 'Ambidextrous marsupial',
+                article_id: 3,
+                author: 'icellusedkars',
+                votes: 0,
+                created_at: "2020-09-19T23:10:00.000Z"
+              },
+                {
+                comment_id: 10,
+                body: 'git push origin master',
+                article_id: 3,
+                author: 'icellusedkars',
+                votes: 0,
+                created_at: "2020-06-20T07:24:00.000Z"
+              }
+        ]}
+
+        return request(app).get("/api/articles/3/comments") // expect for id = 3
+        .then(data => {
+            expect(data._body).toEqual(expected); // expect 2 comments
+        })
+    });
+    test('should return error 404 and a not found message when passed an id that does not contain a resource', () => {
+        return request(app).get("/api/articles/999999999/comments")
+        .expect(404)
+        .then((data) => {
+            expect(data._body.msg).toBe("No article found for article_id: 999999999");
+        })
+    });
+    test('should return error 400 and a message when passed an invalid id', () => {
+        return request(app).get("/api/articles/notAnId/comments")
+        .expect(400)
+        .then(data => {
+            expect(data._body.msg).toBe("Invalid input: 400 Bad Request");
+        })
+    });
+    test('should be sorted by date in descending order', () => {
+        // do a loop, check in each one the date is not before each other
+        return request(app).get("/api/articles/1/comments") // using article id 1 it has more comments
+        .then(data => {
+            let resultArr = data._body.comments; // putting in variable for convenience
+            expect(resultArr.length > 0).toEqual(true); // check for empty arr
+            for (let i = 0; i < resultArr.length - 2; i++) { // loop until 2nd last
+                // convert strings to date then to numbers to compare
+                expect(new Date(resultArr[i].created_at).getTime()).toBeGreaterThanOrEqual(new Date(resultArr[i + 1].created_at).getTime())
+            }
         })
     });
 });

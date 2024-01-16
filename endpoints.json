@@ -13,7 +13,7 @@
             "exampleResponse": { "topics": [] }
           },
           "GET /api/articles": {
-            "description": "serves an array of all articles",
+            "description": "serves an array of all articles in descending order / newest first",
             "queries": ["author", "topic", "sort_by", "order"],
             "exampleResponse": { "articles": [{
                 "author": "icellusedkars",

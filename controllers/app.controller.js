@@ -1,4 +1,4 @@
-const {getAllTopics, getArticleById, getAllArticlesModel} = require("../models/app.model")
+const {getAllTopics, getArticleById, getAllArticlesModel, getAllCommentsForArticleModel} = require("../models/app.model")
 const allEndpoints = require("../endpoints.json")
 
 
@@ -30,5 +30,16 @@ function getAllArticles(request, response, next) {
     })
 }
 
-module.exports = {topicsController, apiController, articleController, getAllArticles}
+function getAllCommentsForArticle(request, response, next) {
+    const chosenArticleId = request.params.article_id
+
+    return getAllCommentsForArticleModel(chosenArticleId).then(data => {
+        console.log(data);
+        response.status(200).send({comments : data})
+    }).catch(err => {
+        next(err);
+    }) 
+}
+
+module.exports = {topicsController, apiController, articleController, getAllArticles, getAllCommentsForArticle}
 

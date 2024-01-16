@@ -44,4 +44,16 @@ function getAllArticlesModel () {
     })
 }
 
-module.exports = {getAllTopics, getArticleById, getAllArticlesModel}
+function getAllCommentsForArticleModel (chosenId) {
+    return db.query(`SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC`, [chosenId]).then(data => {
+        if (data.rows.length < 1) {
+            return Promise.reject({
+                status: 404,
+                msg: `No article found for article_id: ${chosenId}`
+            })
+        }
+        return data.rows;
+    })
+}
+
+module.exports = {getAllTopics, getArticleById, getAllArticlesModel, getAllCommentsForArticleModel}
