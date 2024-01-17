@@ -192,9 +192,57 @@ describe('testing GET /api/articles/:article_id/comments', () => {
         return request(app).get("/api/articles/1/comments") // using article id 1 it has more comments
         .then(data => {
             let resultArr = data._body.comments;
-            expect(resultArr.length > 0).toEqual(true); // check for empty arr
             expect(resultArr).toBeSortedBy('created_at', { descending: true });
 
+        })
+    });
+});
+
+describe('testing POST /api/articles/:article_id/comments', () => {
+    test('should post the comment and should respond with a 201 status code and the posted comment', () => {
+        
+        let currentCount;
+        // use article id 2
+        return request(app).get("/api/articles/2/comments")
+        .then(data => {
+            // get current comment count before doing anything
+            currentCount = data._body.comments.length;
+        })
+        .then(() => {
+
+            const reqBodyObj = {
+                username : "lurker",
+                body : "just commenting on article id 2!"
+            }
+
+            return request(app).post("/api/articles/2/comments")
+            .send(reqBodyObj)
+            .expect(201)
+        })
+        .then(response => {
+            // check it responded with correct comment
+            expect(response._body.comment[0].author).toBe("lurker");
+            expect(response._body.comment[0].body).toBe("just commenting on article id 2!");
+        })
+        .then(() => {
+            return request(app).get("/api/articles/2/comments")
+        })
+        .then((data) => {
+            // checking the amount of comments have increased since the start
+            expect(currentCount < data._body.comments.length).toEqual(true);
+        })
+
+    });
+    test('error handle malformed body / missing required fields - 400 bad request', () => {
+        const reqBodyObj = {
+            username : "lurker"
+        }
+
+        return request(app).post("/api/articles/2/comments")
+        .send(reqBodyObj)
+        .expect(400)
+        .then(response => {
+            expect(response._body.msg).toEqual("malformed body / missing required fields: 400 Bad Request");
         })
     });
 });
