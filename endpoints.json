@@ -91,6 +91,23 @@
               "created_at": "2020-06-20T07:24:00.000Z"
             }
           ]}
+      },
+      "POST /api/articles/:article_id/comments": {
+        "description": "Post a new comment to a given article ID",
+        "queries": ["article_id"],
+        "exampleResponse": {
+          "comment": [
+            {
+              "comment_id": 19,
+              "body": "just commenting on article ID 2!",
+              "article_id": 2,
+              "author": "lurker",
+              "votes": 0,
+              "created_at": "2024-01-17T13:46:43.851Z"
+            }
+          ]
+        }
       }
+      
     
 }
