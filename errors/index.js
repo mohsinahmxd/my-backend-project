@@ -10,12 +10,16 @@ exports.handleCustomError = (err, req, res, next) => {
 exports.handlePsqlErrors = (err, req, res, next) => {
     if (err.code === '22P02') {
       res.status(400).send({ msg: 'Invalid input: 400 Bad Request' });
-    } else next(err);
+    } else if (err.code === '23502') {
+        console.log("here", err.code)
+        res.status(400).send({ msg: 'malformed body / missing required fields: 400 Bad Request' });
+    } else {
+        next(err);
   };
-
+}
 
 // final err
 exports.handleInternalServerError = (err, req, res, next) => {
     console.log(err);
     res.status(500).send({ msg: 'Internal Server Error' });
-} 
+}

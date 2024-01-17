@@ -221,7 +221,6 @@ describe('testing POST /api/articles/:article_id/comments', () => {
         })
         .then(response => {
             // check it responded with correct comment
-            console.log(response._body.comment)
             expect(response._body.comment[0].author).toBe("lurker");
             expect(response._body.comment[0].body).toBe("just commenting on article id 2!");
         })
@@ -234,10 +233,16 @@ describe('testing POST /api/articles/:article_id/comments', () => {
         })
 
     });
-    test.skip('error handle malformed body / missing required fields - 400 bad request', () => {
-        
-    });
-    test.skip('error handle failing schema validation - 400 bad request', () => {
-        
+    test('error handle malformed body / missing required fields - 400 bad request', () => {
+        const reqBodyObj = {
+            username : "lurker"
+        }
+
+        return request(app).post("/api/articles/2/comments")
+        .send(reqBodyObj)
+        .expect(400)
+        .then(response => {
+            expect(response._body.msg).toEqual("malformed body / missing required fields: 400 Bad Request");
+        })
     });
 });
