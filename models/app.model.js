@@ -1,4 +1,6 @@
 const db = require("../db/connection.js")
+const {convertTimestampToDate, createRef, formatComments, checkExists} = require("../db/seeds/utils.js")
+
 
 function getAllTopics() {
     return db.query(`SELECT * FROM topics`).then(data => {
@@ -48,16 +50,29 @@ function getAllArticlesModel () {
     })
 }
 
-function getAllCommentsForArticleModel (chosenId) {
-    return db.query(`SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC`, [chosenId]).then(data => {
-        if (data.rows.length < 1) {
+async function getAllCommentsForArticleModel (chosenId) {
+    let queryResult = await db.query(`SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC`, [chosenId])
+
+    if (queryResult.rows.length < 1) {
+        let result = await checkExists("articles", "article_id", chosenId)
+        if (result === "resource exists") {
+            return queryResult.rows;
+        } else if (result === "resource does not exist") {
             return Promise.reject({
                 status: 404,
                 msg: `No article found for article_id: ${chosenId}`
             })
         }
-        return data.rows;
-    })
+    } else {
+        return queryResult.rows;
+
+    }
 }
 
-module.exports = {getAllTopics, getArticleById, getAllArticlesModel, getAllCommentsForArticleModel}
+async function postCommentToArticleModel (givenComment, chosenId) {
+    let result = await db.query(`INSERT INTO comments (body, article_id, author, votes) VALUES ($1, $2, $3, $4) RETURNING *`, [givenComment.body, chosenId, givenComment.username, 0])
+
+    return result;
+}
+
+module.exports = {getAllTopics, getArticleById, getAllArticlesModel, getAllCommentsForArticleModel, postCommentToArticleModel}

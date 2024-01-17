@@ -2,7 +2,14 @@ const {
   convertTimestampToDate,
   createRef,
   formatComments,
+  checkExists,
 } = require("../db/seeds/utils");
+
+const db = require("../db/connection.js")
+
+afterAll(() => {
+  return db.end();
+})
 
 describe("convertTimestampToDate", () => {
   test("returns a new object", () => {
@@ -101,4 +108,14 @@ describe("formatComments", () => {
     const formattedComments = formatComments(comments, {});
     expect(formattedComments[0].created_at).toEqual(new Date(timestamp));
   });
+});
+
+// this function checks whether a resource exists
+describe('testing checkExists', () => {
+    test('should return "resource exists" when given a valid table, column and value', async () => {
+      expect(await checkExists("articles", "article_id", 1)).toBe("resource exists");
+    });
+    test('should return "resource does not exist" when given a INVALID table, column and value', async () => {
+      expect(await checkExists("articles", "article_id", 99999999)).toBe("resource does not exist");
+    });
 });
