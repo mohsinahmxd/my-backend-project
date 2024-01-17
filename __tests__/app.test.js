@@ -92,8 +92,6 @@ describe('testing GET /api/articles/:article_id', () => {
 describe('testing GET /api/articles', () => {
     test('should respond with status 200 and an articles array of all article objects each with the required properties', () => {
 
-        // make sure body property is not included in final list of objects
-
         return request(app).get("/api/articles")
         .expect(200)
         .then(response => {
@@ -106,26 +104,20 @@ describe('testing GET /api/articles', () => {
                 expect(typeof article.created_at).toBe("string")
                 expect(typeof article.votes).toBe("number")
                 expect(typeof article.article_img_url).toBe("string")
-                // will test for comment_count in next test
+                expect(typeof article.comment_count).toBe("number")
             }))
         })
     });
     test('should be sorted by date in descending order', () => {
-        // do a loop, check in each one the date is not before each other
         return request(app).get("/api/articles")
         .then(data => {
-            let resultArr = data._body.articles; // putting in variable for convenience
+            let resultArr = data._body.articles; 
             expect(resultArr.length > 0).toEqual(true); // check for empty arr
-            for (let i = 0; i < resultArr.length - 2; i++) { // loop until 2nd last
-                // convert strings to date then to numbers to compare
-                expect(new Date(resultArr[i].created_at).getTime()).toBeGreaterThanOrEqual(new Date(resultArr[i + 1].created_at).getTime())
-            }
+            expect(resultArr).toBeSortedBy('created_at', { descending: true });
         })
     });
     test('count up and return the correct amount of comments for each article_id. Do this for all article objects, then add the total comment_count to each object, and then return an array of all the modified article objects', () => {
 
-        // just do assertions for first 2 rows, we can then assume rest is correct
-        // it's already sorted in descending order so we know and expect which ones are first
         return request(app).get("/api/articles")
         .then(data => {
             const expect1 = {
@@ -136,7 +128,7 @@ describe('testing GET /api/articles', () => {
                 created_at: "2020-11-03T09:12:00.000Z",
                 votes: 0,
                 article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
-                comment_count: '2'
+                comment_count: 2
             }
             const expect2 = {
                 author: 'icellusedkars',
@@ -146,7 +138,7 @@ describe('testing GET /api/articles', () => {
                 created_at: "2020-10-18T01:00:00.000Z",
                 votes: 0,
                 article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
-                comment_count: '1'
+                comment_count: 1
             }
 
             expect(data._body.articles[0]).toEqual(expect1);
@@ -155,14 +147,9 @@ describe('testing GET /api/articles', () => {
     });
 });
 
-// --
-// -- 
-
 describe('testing GET /api/articles/:article_id/comments', () => {
     test('should return status code 200 and an array of comments for the given article_id', () => {
 
-        // build expected
-        // i have put these in DESC order by date for a future test
         const expected = {comments : [
             {
                 comment_id: 11,
@@ -202,15 +189,12 @@ describe('testing GET /api/articles/:article_id/comments', () => {
         })
     });
     test('should be sorted by date in descending order', () => {
-        // do a loop, check in each one the date is not before each other
         return request(app).get("/api/articles/1/comments") // using article id 1 it has more comments
         .then(data => {
-            let resultArr = data._body.comments; // putting in variable for convenience
+            let resultArr = data._body.comments;
             expect(resultArr.length > 0).toEqual(true); // check for empty arr
-            for (let i = 0; i < resultArr.length - 2; i++) { // loop until 2nd last
-                // convert strings to date then to numbers to compare
-                expect(new Date(resultArr[i].created_at).getTime()).toBeGreaterThanOrEqual(new Date(resultArr[i + 1].created_at).getTime())
-            }
+            expect(resultArr).toBeSortedBy('created_at', { descending: true });
+
         })
     });
 });

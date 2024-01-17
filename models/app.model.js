@@ -40,6 +40,10 @@ function getAllArticlesModel () {
     article_img_url
     ORDER BY created_at DESC`)
     .then(data => {
+        // convert count to number
+        data.rows.forEach(row => {
+            row.comment_count = Number(row.comment_count);
+        })
         return data.rows;
     })
 }
