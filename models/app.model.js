@@ -114,4 +114,10 @@ async function deleteCommentModel(chosenId) {
     }
 }
 
-module.exports = {getAllTopics, getArticleById, getAllArticlesModel, getAllCommentsForArticleModel, postCommentToArticleModel, updateArticleModel, deleteCommentModel}
+async function getAllUsersModel () {
+    const queryResult = await db.query(`SELECT * FROM users`)
+
+    return queryResult.rows;
+}
+
+module.exports = {getAllTopics, getArticleById, getAllArticlesModel, getAllCommentsForArticleModel, postCommentToArticleModel, updateArticleModel, deleteCommentModel, getAllUsersModel}

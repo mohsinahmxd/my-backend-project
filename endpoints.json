@@ -25,6 +25,11 @@
                 "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
                 "comment_count": "2"
               }]}
+          },
+          "GET /api/users": {
+            "description": "serves an array of objects, each object is a user with the following properties: username, name, avatar_url",
+            "queries": [],
+            "exampleResponse": { "users": [] }
           }
         }
     }

@@ -427,3 +427,22 @@ describe('testing DELETE /api/comments/:comment_id', () => {
         })
     });
 });
+
+describe('test GET /api/users', () => {
+    test('should return status code 200 and all the users, should be an array of objects and each object should have the correct properties', () => {
+        return request(app).get("/api/users")
+        .expect(200)
+        .then(response => {
+            expect(response._body.users.length > 0).toEqual(true); // check for empty arr
+            response._body.users.forEach((user => { // each arr item is an obj
+                expect(typeof user.username).toBe("string")
+                expect(typeof user.name).toBe("string")
+                expect(typeof user.avatar_url).toBe("string")
+            }))
+        })
+    })
+    test('status:404, should respond with 404 when passed a route that does not exist ', () => {
+        return request(app).get("/api/randomstuff4")
+        .expect(404)
+    });
+});
