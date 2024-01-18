@@ -9,7 +9,7 @@ exports.handleCustomError = (err, req, res, next) => {
 
 exports.handlePsqlErrors = (err, req, res, next) => {
     if (err.code === '22P02') {
-      res.status(400).send({ msg: 'Invalid input: 400 Bad Request' });
+      res.status(400).send({ msg: '400 Bad Request: Invalid input' });
     } else if (err.code === '23502') {
         res.status(400).send({ msg: 'malformed body / missing required fields: 400 Bad Request' });
     } else {

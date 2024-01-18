@@ -84,7 +84,7 @@ describe('testing GET /api/articles/:article_id', () => {
         return request(app).get("/api/articles/notAnId")
         .expect(400)
         .then(data => {
-            expect(data._body.msg).toBe("Invalid input: 400 Bad Request");
+            expect(data._body.msg).toBe("400 Bad Request: Invalid input");
         })
     });
 });
@@ -170,6 +170,7 @@ describe('testing GET /api/articles/:article_id/comments', () => {
         ]}
 
         return request(app).get("/api/articles/3/comments") // expect for id = 3
+        .expect(200)
         .then(data => {
             expect(data._body).toEqual(expected); // expect 2 comments
         })
@@ -185,7 +186,7 @@ describe('testing GET /api/articles/:article_id/comments', () => {
         return request(app).get("/api/articles/notAnId/comments")
         .expect(400)
         .then(data => {
-            expect(data._body.msg).toBe("Invalid input: 400 Bad Request");
+            expect(data._body.msg).toBe("400 Bad Request: Invalid input");
         })
     });
     test('should be sorted by date in descending order', () => {
@@ -194,6 +195,17 @@ describe('testing GET /api/articles/:article_id/comments', () => {
             let resultArr = data._body.comments;
             expect(resultArr).toBeSortedBy('created_at', { descending: true });
 
+        })
+    });
+    test('should respond with a 200 status code and an empty array IF the id is valid but there are no comments for that given id', () => {
+        return request(app).get("/api/articles/2/comments") // article id 2 has 0 comments
+        .expect(200)
+        .then(data => {
+            const expected = {
+                comments : []
+            }
+
+            expect(data._body).toEqual(expected);
         })
     });
 });
