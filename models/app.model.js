@@ -75,4 +75,24 @@ async function postCommentToArticleModel (givenComment, chosenId) {
     return result.rows;
 }
 
-module.exports = {getAllTopics, getArticleById, getAllArticlesModel, getAllCommentsForArticleModel, postCommentToArticleModel}
+async function updateArticleModel (inc_votes, chosenId) {
+    const queryResult = await db.query('UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *', [inc_votes, chosenId]);
+
+    if (queryResult.rows.length < 1) {
+        let result = await checkExists("articles", "article_id", chosenId)
+        if (result === "resource exists") {
+            return queryResult.rows;
+        } else if (result === "resource does not exist") {
+            return Promise.reject({
+                status: 404,
+                msg: `No article found for article_id: ${chosenId}`
+            })
+        }
+    } else {
+        return queryResult.rows;
+
+    }
+
+}
+
+module.exports = {getAllTopics, getArticleById, getAllArticlesModel, getAllCommentsForArticleModel, postCommentToArticleModel, updateArticleModel}
