@@ -9,11 +9,37 @@ function getAllTopics() {
 }
 
 function getArticleById (chosenId) {
-    return db.query(`SELECT * FROM articles WHERE article_id = $1`, [chosenId]).then(data => {
+    return db.query(`
+    SELECT
+    articles.author,
+    title,
+    articles.article_id,
+    topic,
+    articles.created_at,
+    articles.votes,
+    article_img_url,
+    articles.body,
+    COUNT (comments.comment_id) AS comment_count
+    FROM articles
+    LEFT JOIN comments ON articles.article_id = comments.article_id
+    WHERE articles.article_id = $1
+    GROUP BY articles.author,
+    title,
+    articles.article_id,
+    topic,
+    articles.created_at,
+    articles.votes,
+    article_img_url,
+    articles.body`, [chosenId]).then(data => {
         if (data.rows.length < 1) {
             return Promise.reject({
                 status: 404,
                 msg: `No article found for article_id: ${chosenId}`
+            })
+        } else {
+            // convert comment count to number before sending
+            data.rows.forEach(row => {
+                row.comment_count = Number(row.comment_count);
             })
         }
         return data.rows;
