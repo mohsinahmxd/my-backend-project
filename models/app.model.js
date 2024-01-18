@@ -72,7 +72,7 @@ async function getAllCommentsForArticleModel (chosenId) {
 async function postCommentToArticleModel (givenComment, chosenId) {
     let result = await db.query(`INSERT INTO comments (body, article_id, author, votes) VALUES ($1, $2, $3, $4) RETURNING *`, [givenComment.body, chosenId, givenComment.username, 0])
 
-    return result;
+    return result.rows;
 }
 
 module.exports = {getAllTopics, getArticleById, getAllArticlesModel, getAllCommentsForArticleModel, postCommentToArticleModel}

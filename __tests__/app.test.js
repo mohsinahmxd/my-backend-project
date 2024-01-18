@@ -233,6 +233,9 @@ describe('testing POST /api/articles/:article_id/comments', () => {
         })
         .then(response => {
             // check it responded with correct comment
+            expect(typeof response._body.comment[0].comment_id).toBe("number")
+            expect(typeof response._body.comment[0].votes).toBe("number")
+            expect(typeof response._body.comment[0].created_at).toBe("string")
             expect(response._body.comment[0].author).toBe("lurker");
             expect(response._body.comment[0].body).toBe("just commenting on article id 2!");
         })
@@ -245,7 +248,7 @@ describe('testing POST /api/articles/:article_id/comments', () => {
         })
 
     });
-    test('error handle malformed body / missing required fields - 400 bad request', () => {
+    test('if passed no body, respond with 400 Bad Request: malformed body / missing required fields', () => {
         const reqBodyObj = {
             username : "lurker"
         }
@@ -254,7 +257,46 @@ describe('testing POST /api/articles/:article_id/comments', () => {
         .send(reqBodyObj)
         .expect(400)
         .then(response => {
-            expect(response._body.msg).toEqual("malformed body / missing required fields: 400 Bad Request");
+            expect(response._body.msg).toEqual("400 Bad Request: malformed body / missing required fields");
+        })
+    });
+    test('if passed an invalid ID, respond with 400 Bad Request: Invalid input', () => {
+        const reqBodyObj = {
+            username : "lurker",
+            body : "just commenting on article id 2!"
+        }
+
+        return request(app).post("/api/articles/notAnId/comments") // invalid id
+        .send(reqBodyObj)
+        .expect(400)
+        .then(response => {
+            expect(response._body.msg).toEqual("400 Bad Request: Invalid input");
+        })
+    });
+    test('if passed a username that does NOT exist, respond with 404 Not Found', () => {
+        const reqBodyObj = {
+            username : "massiveman", // username does not exist
+            body : "just commenting on article id 2!"
+        }
+
+        return request(app).post("/api/articles/2/comments")
+        .send(reqBodyObj)
+        .expect(404)
+        .then(response => {
+            expect(response._body.msg).toEqual('404 Not Found');
+        })
+    });
+    test('if a non existent article id, respond with 404 Not Found', () => {
+        const reqBodyObj = {
+            username : "lurker",
+            body : "random comment"
+        }
+
+        return request(app).post("/api/articles/99999999/comments") // article id does not exist
+        .send(reqBodyObj)
+        .expect(404)
+        .then(response => {
+            expect(response._body.msg).toEqual('404 Not Found');
         })
     });
 });

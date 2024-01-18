@@ -44,7 +44,7 @@ function postCommentToArticle (request, response, next) {
     const givenComment = request.body
     const chosenArticleId = request.params.article_id
     postCommentToArticleModel(givenComment, chosenArticleId).then(data => {
-        response.status(201).send({comment : data.rows})
+        response.status(201).send({comment : data})
     }).catch(err => {
         next(err);
     })
