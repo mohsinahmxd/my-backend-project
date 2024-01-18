@@ -303,6 +303,7 @@ describe('testing POST /api/articles/:article_id/comments', () => {
 
 describe('testing PATCH /api/articles/:article_id', () => {
     test('should update the article via id, and should respond with a 200 status code and the updated article', () => {
+        
         const expected = {article : [
             {
                 article_id : 4,
@@ -338,7 +339,7 @@ describe('testing PATCH /api/articles/:article_id', () => {
                 author: "rogersop",
                 body: "We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages",
                 created_at: "2020-05-06T01:14:00.000Z",
-                votes: -25, // currently votes is at 0, expect it to be 50 after this
+                votes: -25, // currently votes is at 0
                 article_img_url:
                   "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
             }]
