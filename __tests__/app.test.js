@@ -286,7 +286,7 @@ describe('testing POST /api/articles/:article_id/comments', () => {
             expect(response._body.msg).toEqual('404 Not Found');
         })
     });
-    test('if a non existent article id, respond with 404 Not Found', () => {
+    test('if passed an id tha does exist / not existent article id, respond with 404 Not Found', () => {
         const reqBodyObj = {
             username : "lurker",
             body : "random comment"
@@ -297,6 +297,110 @@ describe('testing POST /api/articles/:article_id/comments', () => {
         .expect(404)
         .then(response => {
             expect(response._body.msg).toEqual('404 Not Found');
+        })
+    });
+});
+
+describe('testing PATCH /api/articles/:article_id', () => {
+    test('should update the article via id, and should respond with a 200 status code and the updated article', () => {
+        const expected = {article : [
+            {
+                article_id : 4,
+                title: "Student SUES Mitch!",
+                topic: "mitch",
+                author: "rogersop",
+                body: "We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages",
+                created_at: "2020-05-06T01:14:00.000Z",
+                votes: 50, // currently votes is at 0, expect it to be 50 after this
+                article_img_url:
+                  "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+            }]
+        }
+
+        const reqBodyObj = {
+            inc_votes: 50
+        }
+
+        return request(app).patch("/api/articles/4") // chose article id 4
+        .send(reqBodyObj)
+        .expect(200)
+        .then(response => {
+            expect(response._body).toEqual(expected);
+        })
+
+    })
+    test('when passing a NEGATIVE amount of votes, should decrement / update the article via id, and should respond with a 200 status code and the updated article', () => {
+        const expected = {article : [
+            {
+                article_id : 4,
+                title: "Student SUES Mitch!",
+                topic: "mitch",
+                author: "rogersop",
+                body: "We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages",
+                created_at: "2020-05-06T01:14:00.000Z",
+                votes: -25, // currently votes is at 0, expect it to be 50 after this
+                article_img_url:
+                  "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+            }]
+        }
+
+        const reqBodyObj = {
+            inc_votes: -25
+        }
+
+        return request(app).patch("/api/articles/4") // chose article id 4
+        .send(reqBodyObj)
+        .expect(200)
+        .then(response => {
+            expect(response._body).toEqual(expected);
+        })
+
+    })
+    test('if passed object does not contain anything, respond with error 400 bad request', () => {
+        const reqBodyObj = {}
+
+
+        return request(app).patch("/api/articles/4")
+        .send(reqBodyObj)
+        .expect(400)
+        .then(response => {
+            expect(response._body.msg).toEqual("400 Bad Request: malformed body / missing required fields");
+        })
+    });
+    test('if passed an invalid vote value, respond with 400 Bad Request: Invalid input', () => {
+        const reqBodyObj = {
+            inc_votes: "randomstr" // invalid
+        }
+
+        return request(app).patch("/api/articles/4")
+        .send(reqBodyObj)
+        .expect(400)
+        .then(response => {
+            expect(response._body.msg).toEqual("400 Bad Request: Invalid input");
+        })
+    });
+    test('if passed a id that does NOT exist / non existent, respond with 404 Not Found', () => {
+        const reqBodyObj = {
+            inc_votes: 25
+        }
+
+        return request(app).patch("/api/articles/99999999") // invalid
+        .send(reqBodyObj)
+        .expect(404)
+        .then(response => {
+            expect(response._body.msg).toEqual('No article found for article_id: 99999999');
+        })
+    });
+    test('if an invalid id, respond with 400 bad request', () => {
+        const reqBodyObj = {
+            inc_votes: 25
+        }
+
+        return request(app).patch("/api/articles/randomid") // invalid
+        .send(reqBodyObj)
+        .expect(400)
+        .then(response => {
+            expect(response._body.msg).toEqual('400 Bad Request: Invalid input');
         })
     });
 });
