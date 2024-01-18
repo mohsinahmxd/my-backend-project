@@ -20,8 +20,12 @@ function getArticleById (chosenId) {
     })
 }
 
-function getAllArticlesModel (topicToFilter) {
-    if (!["mitch", "cats", "paper", undefined].includes(topicToFilter)) {
+async function getAllArticlesModel (topicToFilter) {
+    let topics = await db.query(`SELECT slug FROM topics`)
+    topics = topics.rows.map(topic => topic.slug)
+    topics.push(undefined)
+
+    if (!topics.includes(topicToFilter)) {
         return Promise.reject({ status: 400, msg: "Invalid topic, unable to filter" });
     }
 
@@ -54,14 +58,12 @@ function getAllArticlesModel (topicToFilter) {
     article_img_url
     ORDER BY created_at DESC`
 
-    return db.query(queryStr, queryValues)
-    .then(data => {
-        // convert count to number
-        data.rows.forEach(row => {
-            row.comment_count = Number(row.comment_count);
-        })
-        return data.rows;
+    let queryResult = await db.query(queryStr, queryValues)
+    // convert count to number
+    queryResult.rows.forEach(row => {
+        row.comment_count = Number(row.comment_count);
     })
+    return queryResult.rows;
 }
 
 async function getAllCommentsForArticleModel (chosenId) {

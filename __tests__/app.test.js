@@ -168,6 +168,17 @@ describe('testing GET /api/articles', () => {
             expect(data._body).toEqual(expected);
         })
     });
+    test('should return status code 200 and an empty array if the topic is valid but does not have any articles associated with it', () => {
+        const expected = {
+            articles: []
+        }
+
+        return request(app).get("/api/articles?topic=paper") 
+        .expect(200)
+        .then(data => {
+            expect(data._body).toEqual(expected);
+        })
+    });
     test('should return status code 400 and a message when passed an invalid topic for filtering', () => {
         return request(app).get("/api/articles/?topic=adsafasdfa")
         .expect(400)
