@@ -23,7 +23,9 @@ function articleController(request, response, next) {
 }
 
 function getAllArticles(request, response, next) {
-    return getAllArticlesModel().then(data => {
+    const {topic} = request.query // get topic to filter by
+
+    return getAllArticlesModel(topic).then(data => {
         response.status(200).send({articles : data});
     }).catch(err => {
         next(err);

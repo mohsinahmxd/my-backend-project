@@ -20,8 +20,13 @@ function getArticleById (chosenId) {
     })
 }
 
-function getAllArticlesModel () {
-    return db.query(`SELECT
+function getAllArticlesModel (topicToFilter) {
+    if (!["mitch", "cats", "paper", undefined].includes(topicToFilter)) {
+        return Promise.reject({ status: 400, msg: "Invalid topic, unable to filter" });
+    }
+
+    let queryValues = [];
+    let queryStr = `SELECT
     articles.author,
     title,
     articles.article_id,
@@ -31,8 +36,15 @@ function getAllArticlesModel () {
     article_img_url,
     COUNT (comments.comment_id) AS comment_count
     FROM articles
-    LEFT JOIN comments ON articles.article_id = comments.article_id
-    GROUP BY
+    LEFT JOIN comments ON articles.article_id = comments.article_id`
+
+    // checking for optional query value
+    if (topicToFilter) {
+        queryValues.push(topicToFilter)
+        queryStr += ` WHERE topic = $1`
+    }
+
+    queryStr += ` GROUP BY
     articles.author,
     title,
     articles.article_id,
@@ -40,7 +52,9 @@ function getAllArticlesModel () {
     articles.created_at,
     articles.votes,
     article_img_url
-    ORDER BY created_at DESC`)
+    ORDER BY created_at DESC`
+
+    return db.query(queryStr, queryValues)
     .then(data => {
         // convert count to number
         data.rows.forEach(row => {
