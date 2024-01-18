@@ -53,19 +53,19 @@ function getAllArticlesModel () {
 async function getAllCommentsForArticleModel (chosenId) {
     let queryResult = await db.query(`SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC`, [chosenId])
 
-    if (queryResult.rows.length < 1) {
-        let result = await checkExists("articles", "article_id", chosenId)
-        if (result === "resource exists") {
-            return queryResult.rows;
-        } else if (result === "resource does not exist") {
-            return Promise.reject({
-                status: 404,
-                msg: `No article found for article_id: ${chosenId}`
-            })
-        }
-    } else {
+    if (queryResult.rows.length > 0) {
         return queryResult.rows;
+    }
 
+    let result = await checkExists("articles", "article_id", chosenId);
+
+    if (result === "resource exists") {
+        return queryResult.rows;
+    } else { // resource does not exist
+        return Promise.reject({
+            status: 404,
+            msg: `No article found for article_id: ${chosenId}`
+        });
     }
 }
 
@@ -78,40 +78,39 @@ async function postCommentToArticleModel (givenComment, chosenId) {
 async function updateArticleModel (inc_votes, chosenId) {
     const queryResult = await db.query('UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *', [inc_votes, chosenId]);
 
-    if (queryResult.rows.length < 1) {
-        let result = await checkExists("articles", "article_id", chosenId)
-        if (result === "resource exists") {
-            return queryResult.rows;
-        } else if (result === "resource does not exist") {
-            return Promise.reject({
-                status: 404,
-                msg: `No article found for article_id: ${chosenId}`
-            })
-        }
-    } else {
+    if (queryResult.rows.length > 0) {
         return queryResult.rows;
+    }
 
+    let result = await checkExists("articles", "article_id", chosenId);
+
+    if (result === "resource exists") {
+        return queryResult.rows;
+    } else { // resource does not exist
+        return Promise.reject({
+            status: 404,
+            msg: `No article found for article_id: ${chosenId}`
+        });
     }
 
 }
 
-async function deleteCommentModel (chosenId) {
+async function deleteCommentModel(chosenId) {
     const queryResult = await db.query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *`, [chosenId]);
 
-
-    if (queryResult.rows.length < 1) {
-        let result = await checkExists("comments", "comment_id", chosenId)
-        if (result === "resource exists") {
-            return queryResult.rows;
-        } else if (result === "resource does not exist") {
-            return Promise.reject({
-                status: 404,
-                msg: `No comment found for comment_id: ${chosenId}`
-            })
-        }
-    } else {
+    if (queryResult.rows.length > 0) {
         return queryResult.rows;
+    }
 
+    let result = await checkExists("comments", "comment_id", chosenId);
+
+    if (result === "resource exists") {
+        return queryResult.rows;
+    } else { // resource does not exist
+        return Promise.reject({
+            status: 404,
+            msg: `No comment found for comment_id: ${chosenId}`
+        });
     }
 }
 
