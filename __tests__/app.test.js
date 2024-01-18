@@ -404,3 +404,25 @@ describe('testing PATCH /api/articles/:article_id', () => {
         })
     });
 });
+
+describe('testing DELETE /api/comments/:comment_id', () => {
+    test('should delete the comment and respond with status code 204 no content and nothing else', () => {
+        return request(app).delete("/api/comments/4").expect(204)
+    });
+    test('if passed a id that does NOT exist / non existent, respond with 404 Not Found', () => {
+
+        return request(app).delete("/api/comments/99999999") // invalid
+        .expect(404)
+        .then(response => {
+            expect(response._body.msg).toEqual('No comment found for comment_id: 99999999');
+        })
+    });
+    test('if an invalid id, respond with 400 bad request', () => {
+
+        return request(app).delete("/api/comments/randomid") // invalid
+        .expect(400)
+        .then(response => {
+            expect(response._body.msg).toEqual('400 Bad Request: Invalid input');
+        })
+    });
+});

@@ -3,7 +3,7 @@ const app = express();
 const {handleCustomError, handlePsqlErrors, handleInternalServerError} = require("./errors/index.js")
 
 // controller import
-const { topicsController, apiController, articleController, getAllArticles, getAllCommentsForArticle, postCommentToArticle, updateArticle} = require("./controllers/app.controller.js")
+const { topicsController, apiController, articleController, getAllArticles, getAllCommentsForArticle, postCommentToArticle, updateArticle, deleteComment} = require("./controllers/app.controller.js")
 
 app.use(express.json());
 
@@ -15,6 +15,7 @@ app.get("/api/articles", getAllArticles)
 app.get("/api/articles/:article_id/comments", getAllCommentsForArticle)
 app.post("/api/articles/:article_id/comments", postCommentToArticle)
 app.patch("/api/articles/:article_id", updateArticle)
+app.delete("/api/comments/:comment_id", deleteComment)
 
 // errors
 app.use(handleCustomError)

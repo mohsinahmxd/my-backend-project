@@ -95,4 +95,24 @@ async function updateArticleModel (inc_votes, chosenId) {
 
 }
 
-module.exports = {getAllTopics, getArticleById, getAllArticlesModel, getAllCommentsForArticleModel, postCommentToArticleModel, updateArticleModel}
+async function deleteCommentModel (chosenId) {
+    const queryResult = await db.query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *`, [chosenId]);
+
+
+    if (queryResult.rows.length < 1) {
+        let result = await checkExists("comments", "comment_id", chosenId)
+        if (result === "resource exists") {
+            return queryResult.rows;
+        } else if (result === "resource does not exist") {
+            return Promise.reject({
+                status: 404,
+                msg: `No comment found for comment_id: ${chosenId}`
+            })
+        }
+    } else {
+        return queryResult.rows;
+
+    }
+}
+
+module.exports = {getAllTopics, getArticleById, getAllArticlesModel, getAllCommentsForArticleModel, postCommentToArticleModel, updateArticleModel, deleteCommentModel}
