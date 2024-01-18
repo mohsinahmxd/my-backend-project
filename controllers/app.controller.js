@@ -1,4 +1,4 @@
-const {getAllTopics, getArticleById, getAllArticlesModel, getAllCommentsForArticleModel, postCommentToArticleModel, updateArticleModel} = require("../models/app.model")
+const {getAllTopics, getArticleById, getAllArticlesModel, getAllCommentsForArticleModel, postCommentToArticleModel, updateArticleModel, deleteCommentModel} = require("../models/app.model")
 const allEndpoints = require("../endpoints.json")
 
 
@@ -61,5 +61,15 @@ function updateArticle (request, response, next) {
     })
 }
 
-module.exports = {topicsController, apiController, articleController, getAllArticles, getAllCommentsForArticle, postCommentToArticle, updateArticle}
+function deleteComment (request, response, next) {
+    const chosenCommentId = request.params.comment_id
+
+    return deleteCommentModel(chosenCommentId).then(data => {
+        response.status(204).send();
+    }).catch(err => {
+        next(err);
+    })
+}
+
+module.exports = {topicsController, apiController, articleController, getAllArticles, getAllCommentsForArticle, postCommentToArticle, updateArticle, deleteComment}
 

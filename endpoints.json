@@ -108,7 +108,7 @@
           ]
         }
       },
-      "POST /api/articles/:article_id/comments": {
+      "PATCH /api/articles/:article_id": {
         "description": "Take the number of votes in an object and Patch a given article ID's votes based on this",
         "queries": ["article_id"],
         "exampleResponse": {
@@ -125,6 +125,10 @@
             }
           ]
         }
+      },
+      "DELETE /api/comments/:comment_id": {
+        "description": "Take a comment id and delete that comment via it's id, there is NO RESPONSE",
+        "queries": ["comment_id"]
       }
       
       
