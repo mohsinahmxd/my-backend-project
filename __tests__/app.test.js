@@ -145,6 +145,34 @@ describe('testing GET /api/articles', () => {
             expect(data._body.articles[1]).toEqual(expect2);
         })
     });
+    test('should return status code 200 and only the articles that meet the given topic filter', () => {
+        const expected = {
+            articles: [{
+                article_id: 5,
+                title: "UNCOVERED: catspiracy to bring down democracy",
+                topic: "cats",
+                author: "rogersop",
+                created_at: "2020-08-03T13:14:00.000Z",
+                article_img_url:
+                  "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                comment_count: 2,
+                votes: 0
+            }]
+        }
+
+        return request(app).get("/api/articles?topic=cats") 
+        .expect(200)
+        .then(data => {
+            expect(data._body).toEqual(expected);
+        })
+    });
+    test('should return status code 400 and a message when passed an invalid topic for filtering', () => {
+        return request(app).get("/api/articles/?topic=adsafasdfa")
+        .expect(400)
+        .then(data => {
+            expect(data._body.msg).toEqual("Invalid topic, unable to filter");
+        })
+    });
 });
 
 describe('testing GET /api/articles/:article_id/comments', () => {
