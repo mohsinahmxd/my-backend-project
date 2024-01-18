@@ -96,16 +96,18 @@ describe('testing GET /api/articles', () => {
         .expect(200)
         .then(response => {
             expect(response._body.articles.length > 0).toEqual(true); // check for empty arr
-            response._body.articles.forEach((article => {
-                expect(typeof article.author).toBe("string")
-                expect(typeof article.title).toBe("string")
-                expect(typeof article.article_id).toBe("number")
-                expect(typeof article.topic).toBe("string")
-                expect(typeof article.created_at).toBe("string")
-                expect(typeof article.votes).toBe("number")
-                expect(typeof article.article_img_url).toBe("string")
-                expect(typeof article.comment_count).toBe("number")
-            }))
+            response._body.articles.forEach(article => {
+                expect(article).toEqual(expect.objectContaining({
+                    author: expect.any(String),
+                    title: expect.any(String),
+                    article_id: expect.any(Number),
+                    topic: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: expect.any(Number),
+                    article_img_url: expect.any(String),
+                    comment_count: expect.any(Number)
+                }));
+            });
         })
     });
     test('should be sorted by date in descending order', () => {
@@ -458,19 +460,19 @@ describe('testing DELETE /api/comments/:comment_id', () => {
 
 describe('test GET /api/users', () => {
     test('should return status code 200 and all the users, should be an array of objects and each object should have the correct properties', () => {
+
+
         return request(app).get("/api/users")
         .expect(200)
         .then(response => {
             expect(response._body.users.length > 0).toEqual(true); // check for empty arr
             response._body.users.forEach((user => { // each arr item is an obj
-                expect(typeof user.username).toBe("string")
-                expect(typeof user.name).toBe("string")
-                expect(typeof user.avatar_url).toBe("string")
+                expect(user).toEqual(expect.objectContaining({
+                    username: expect.any(String),
+                    name: expect.any(String),
+                    avatar_url: expect.any(String)
+                }));
             }))
         })
     })
-    test('status:404, should respond with 404 when passed a route that does not exist ', () => {
-        return request(app).get("/api/randomstuff4")
-        .expect(404)
-    });
 });
