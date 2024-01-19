@@ -88,5 +88,9 @@ function getAllUsers (request, response, next) {
     })
 }
 
+function getUserByUsername (request, response, next) {
+    
+}
+
 module.exports = {topicsController, apiController, articleController, getAllArticles, getAllCommentsForArticle, postCommentToArticle, updateArticle, deleteComment, getAllUsers}
 
