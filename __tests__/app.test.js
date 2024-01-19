@@ -128,7 +128,7 @@ describe('testing GET /api/articles', () => {
             });
         })
     });
-    test('should be sorted by date in descending order', () => {
+    test('should be sorted by date in descending order, this is this endpoints default behaviour / when no sort_by query is given', () => {
         return request(app).get("/api/articles")
         .then(data => {
             let resultArr = data._body.articles; 
@@ -202,6 +202,49 @@ describe('testing GET /api/articles', () => {
         .expect(400)
         .then(data => {
             expect(data._body.msg).toEqual("Invalid topic, unable to filter");
+        })
+    });
+    test('should accept a sort_by query of any column and sort the articles by the given column. order by should remain desc, as no order is given here.', () => {
+        // using votes as the sort_by
+        return request(app).get("/api/articles/?sort_by=votes")
+        .expect(200)
+        .then(data => {
+            let resultArr = data._body.articles; 
+            expect(resultArr).toBeSortedBy('votes', { descending: true });
+        })
+
+    });
+    test('should accept a sort_by query of any column AND a order by query of asc or desc. It should sort the articles by the given column and order them by the given order', () => {
+        // using votes as the sort_by
+        // using ASC
+        return request(app).get("/api/articles/?sort_by=votes&order=ASC")
+        .expect(200)
+        .then(data => {
+            let resultArr = data._body.articles; 
+            expect(resultArr).toBeSortedBy('votes', { ascending: true });
+        })
+    });
+    test('if only order by query is given it should sort the articles by the default which is created at, then order the articles with the given order', () => {
+        // use ASC here because DESC is the default
+        return request(app).get("/api/articles/?order=ASC")
+        .expect(200)
+        .then(data => {
+            let resultArr = data._body.articles; 
+            expect(resultArr).toBeSortedBy('created_at', { ascending: true });
+        })
+    });
+    test('test for an invalid sort query', () => {
+        return request(app).get("/api/articles/?sort_by=asdasdasda")
+        .expect(400)
+        .then(data => {
+            expect(data._body.msg).toEqual("Invalid sort query");
+        })
+    });
+    test('test for an invalid order query, make sure err messages are correct too', () => {
+        return request(app).get("/api/articles/?order=asdasdasda")
+        .expect(400)
+        .then(data => {
+            expect(data._body.msg).toEqual("Invalid order query");
         })
     });
 });
