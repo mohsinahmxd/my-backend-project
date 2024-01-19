@@ -173,4 +173,18 @@ async function getAllUsersModel () {
     return queryResult.rows;
 }
 
-module.exports = {getAllTopics, getArticleById, getAllArticlesModel, getAllCommentsForArticleModel, postCommentToArticleModel, updateArticleModel, deleteCommentModel, getAllUsersModel}
+async function getUserByUsernameModel (chosenUsername) {
+    const queryResult = await db.query(`SELECT * FROM users WHERE username = $1`, [chosenUsername])
+
+    if (queryResult.rows.length === 0) {
+        return Promise.reject({
+            status: 404,
+            msg: `No user found for username: ${chosenUsername}`
+        });
+      } else {
+        return queryResult.rows;
+      }
+}
+
+
+module.exports = {getAllTopics, getArticleById, getAllArticlesModel, getAllCommentsForArticleModel, postCommentToArticleModel, updateArticleModel, deleteCommentModel, getAllUsersModel, getUserByUsernameModel}

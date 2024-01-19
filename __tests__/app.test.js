@@ -548,3 +548,28 @@ describe('test GET /api/users', () => {
         })
     })
 });
+
+describe('testing GET /api/users/:username', () => {
+    const expected = {user : [{
+            username: 'lurker',
+            name: 'do_nothing',
+            avatar_url: 'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png'
+        }]
+    }
+
+    test('should respind with a status code 200 and a username obj based on the given id', () => {
+        return request(app).get("/api/users/lurker")
+        .expect(200)
+        .then(data => {
+            expect(data._body).toEqual(expected);
+        })
+    });
+
+    test('should respond with a status code 404 and a err message when passed a username for a user that does not exist', () => {
+        return request(app).get("/api/users/smallman")
+        .expect(404)
+        .then(data => {
+            expect(data._body.msg).toEqual("No user found for username: smallman");
+        })
+    });
+});

@@ -1,4 +1,4 @@
-const {getAllTopics, getArticleById, getAllArticlesModel, getAllCommentsForArticleModel, postCommentToArticleModel, updateArticleModel, deleteCommentModel, getAllUsersModel} = require("../models/app.model")
+const {getAllTopics, getArticleById, getAllArticlesModel, getAllCommentsForArticleModel, postCommentToArticleModel, updateArticleModel, deleteCommentModel, getAllUsersModel, getUserByUsernameModel} = require("../models/app.model")
 const allEndpoints = require("../endpoints.json")
 
 
@@ -89,8 +89,16 @@ function getAllUsers (request, response, next) {
 }
 
 function getUserByUsername (request, response, next) {
-    
+    const {username} = request.params
+
+    return getUserByUsernameModel(username)
+    .then(data => {
+        response.status(200).send({user : data});
+    })
+    .catch(err => {
+        next(err);
+    }) 
 }
 
-module.exports = {topicsController, apiController, articleController, getAllArticles, getAllCommentsForArticle, postCommentToArticle, updateArticle, deleteComment, getAllUsers}
+module.exports = {topicsController, apiController, articleController, getAllArticles, getAllCommentsForArticle, postCommentToArticle, updateArticle, deleteComment, getAllUsers, getUserByUsername}
 
