@@ -564,4 +564,12 @@ describe('testing GET /api/users/:username', () => {
             expect(data._body).toEqual(expected);
         })
     });
+
+    test('should respond with a status code 404 and a err message when passed a username for a user that does not exist', () => {
+        return request(app).get("/api/users/smallman")
+        .expect(404)
+        .then(data => {
+            expect(data._body.msg).toEqual("No user found for username: smallman");
+        })
+    });
 });
