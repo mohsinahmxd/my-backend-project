@@ -40,6 +40,7 @@ function getArticleById (chosenId) {
             // convert comment count to number before sending
             data.rows.forEach(row => {
                 row.comment_count = Number(row.comment_count);
+         
             })
         }
         return data.rows;
