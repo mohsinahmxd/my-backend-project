@@ -13,7 +13,7 @@
             "exampleResponse": { "topics": [] }
           },
           "GET /api/articles": {
-            "description": "serves an array of all articles in descending order / newest first and accepts a topic query to filter articles by",
+            "description": "serves an array of all articles, default is in descending order / newest first. It accepts a topic query to filter articles by, a sort_by query to sort articles by column (case sensitive) and a order query to order the query by ASC or DESC (case sensitive)",
             "queries": ["author", "topic", "sort_by", "order"],
             "exampleResponse": { "articles": [{
                 "author": "icellusedkars",

@@ -47,14 +47,30 @@ function getArticleById (chosenId) {
     })
 }
 
-async function getAllArticlesModel (topicToFilter) {
+async function getAllArticlesModel (topicToFilter, columnToSortBy = "created_at", chosenOrder = "DESC") {
     let topics = await db.query(`SELECT slug FROM topics`)
+    let columns = await db.query(`
+    SELECT column_name
+    FROM information_schema.columns
+    WHERE table_name = 'articles';
+    `)
+
     topics = topics.rows.map(topic => topic.slug)
     topics.push(undefined)
+    columns = columns.rows.map(column => column.column_name)
 
     if (!topics.includes(topicToFilter)) {
         return Promise.reject({ status: 400, msg: "Invalid topic, unable to filter" });
     }
+
+    if (!columns.includes(columnToSortBy)) {
+        return Promise.reject({ status: 400, msg: "Invalid sort query" });
+    }
+
+    if (!["ASC", "DESC"].includes(chosenOrder)) {
+        return Promise.reject({ status: 400, msg: "Invalid order query" });
+    }
+
 
     let queryValues = [];
     let queryStr = `SELECT
@@ -83,7 +99,7 @@ async function getAllArticlesModel (topicToFilter) {
     articles.created_at,
     articles.votes,
     article_img_url
-    ORDER BY created_at DESC`
+    ORDER BY ${columnToSortBy} ${chosenOrder}`
 
     let queryResult = await db.query(queryStr, queryValues)
     // convert count to number
