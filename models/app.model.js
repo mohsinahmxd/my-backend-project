@@ -173,4 +173,11 @@ async function getAllUsersModel () {
     return queryResult.rows;
 }
 
-module.exports = {getAllTopics, getArticleById, getAllArticlesModel, getAllCommentsForArticleModel, postCommentToArticleModel, updateArticleModel, deleteCommentModel, getAllUsersModel}
+async function getUserByUsernameModel (chosenUsername) {
+    const queryResult = await db.query(`SELECT * FROM users WHERE username = $1`, [chosenUsername])
+
+    return queryResult.rows;
+}
+
+
+module.exports = {getAllTopics, getArticleById, getAllArticlesModel, getAllCommentsForArticleModel, postCommentToArticleModel, updateArticleModel, deleteCommentModel, getAllUsersModel, getUserByUsernameModel}
